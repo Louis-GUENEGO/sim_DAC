@@ -166,3 +166,80 @@ submatrix = makeSubmatrix(diag)
 number = 2;
 [row,col] = findCell(submatrix, number)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% Conversion numérique analogique simple
+
+DACdata_shuffle = zeros([numel(ADCdata) 1]);
+
+diag = 1:1:16;
+submatrix = makeSubmatrix(diag);
+
+state = 1;
+
+for z = 1:numel(ADCdata)
+
+    for y = 1:ADCdata(z)
+       DACdata_shuffle(z) = DACdata_shuffle(z) + A(findCell( submatrix, y ));
+    end
+    
+    if state == 1
+        diag = stage2(diag);
+        submatrix = makeSubmatrix(diag);
+        state = 2;
+    elseif state == 2
+        diag = stage3(diag);
+        submatrix = makeSubmatrix(diag);
+        state = 1;
+    end
+
+end
+
+%% ADC time domain output analysis
+figure('Name','Analog converted signal with shuffle');
+plot(DACdata_shuffle);
+axis([0 N/32 0 63])
+grid
+
+%% ADC frequency domain analysis
+yf = fft(DACdata_shuffle)/N;
+Pyf = abs(yf.*conj(yf));
+
+%% Signal to Noise Ratio computation
+Ps = sum(Pyf(2:N/2));
+k = round(k);
+Pfond = Pyf(k+1);
+Pn = Ps - Pfond;
+SNR = 10*log10(Pfond/Pn);
+
+%% Positive frequency spectrum plot
+PE = 2^res; % exprimÃ© en LSB
+norm = ((PE/2)^2)/4;
+PyfdB = 10*log10(Pyf/norm);
+figure('Name','Spectrum output analog signal with shuffle');
+plot(0:(N-1)/2,PyfdB(1:N/2))
+grid
+axis([0 N/16 -90 0])
+
+title_str = ['SNR (dB) = ' num2str(SNR,4)];
+title(title_str)
+
+
+
+
+
+
+
+
+

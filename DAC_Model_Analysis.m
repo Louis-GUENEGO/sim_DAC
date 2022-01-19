@@ -150,21 +150,21 @@ title(title_str)
 %% Reshuffled diagonal rotated walk switching scheme
 
 diag = 1:1:16;
-submatrix = makeSubmatrix(diag)
+submatrix = makeSubmatrix(diag);
 
 %% stage 2
 
 diag = stage2(diag);
-submatrix = makeSubmatrix(diag)
+submatrix = makeSubmatrix(diag);
 
 %% stage 3
 diag = stage3(diag);
-submatrix = makeSubmatrix(diag)
+submatrix = makeSubmatrix(diag);
 
 %% findCell
 
-number = 2;
-[row,col] = findCell(submatrix, number)
+number = 15;
+[row,col] = findCell(submatrix, number);
 
 
 
